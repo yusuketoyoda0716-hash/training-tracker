@@ -1,16 +1,45 @@
-# React + Vite
+# 🏋️ Training Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+トレーニングを記録・管理できるWebアプリです。
 
-Currently, two official plugins are available:
+🔗 公開URL  
+https://training-tracker-three.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 使用技術
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React (Vite)
+- JavaScript (ES6+)
+- CSS（レスポンシブ対応）
+- localStorage
+- Git / GitHub
+- Vercel（デプロイ）
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ✨ 主な機能
+
+- トレーニング追加 / 削除
+- 日付フィルター表示
+- カレンダー表示（月切替）
+- プリセット作成 / 編集 / 一括登録
+- データの自動保存（localStorage）
+- スマホ対応レスポンシブUI
+
+---
+
+## 🎯 工夫したポイント
+
+- コンポーネント分割による責務分離
+- useMemoによるパフォーマンス最適化
+- カスタムHook（useLocalStorage）作成
+- モバイルUI最適化
+
+---
+
+## 📦 ローカル起動方法
+
+```bash
+npm install
+npm run dev
