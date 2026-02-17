@@ -1,0 +1,537 @@
+/* =============================
+   ベース設定・共通変数
+============================= */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --border: #ececec;
+  --text: #111;
+  --muted: #666;
+  --blue: #3b82f6;
+  --blue-weak: rgba(59, 130, 246, 0.25);
+  --danger-bg: #ffebee;
+  --danger-text: #c62828;
+  --danger-border: #ffcdd2;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* =============================
+   アプリ全体のレイアウト
+============================= */
+.app {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+/* =============================
+   ヘッダー
+============================= */
+.header {
+  margin-bottom: 14px;
+}
+
+.app__title {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.app__sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =============================
+   パネル（白いカードUI）
+============================= */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.panel__title {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* 折りたたみ（details / summary）用 */
+.panel__summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  list-style: none;
+}
+
+.panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.panel__summary::after {
+  content: "▼";
+  float: right;
+  transition: transform 0.2s;
+}
+
+details[open] .panel__summary::after {
+  transform: rotate(180deg);
+}
+
+/* =============================
+   入力欄・ボタン共通
+============================= */
+.input {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #7aa7ff;
+  box-shadow: 0 0 0 3px var(--blue-weak);
+}
+
+.btn {
+  padding: 9px 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: #f4f4f4;
+}
+
+/* サブボタン（見た目控えめ） */
+.btn--sub {
+  background: #fff;
+}
+
+/* メインボタン（追加・保存など） */
+.btn--primary {
+  background: var(--blue);
+  border: none;
+  color: #fff;
+}
+
+.btn--primary:hover {
+  filter: brightness(0.95);
+}
+
+/* 削除などの危険操作用 */
+.btn--danger {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+}
+
+/* 枠だけのボタン */
+.btn--ghost {
+  background: transparent;
+  border: 1px solid #eee;
+}
+
+/* =============================
+   フォーム・日付フィルター
+============================= */
+.filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* 回数・セットなどの2カラム */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* =============================
+   トレーニング一覧
+============================= */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list h3 {
+  margin: 12px 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+
+/* =============================
+   カレンダー
+============================= */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar__day {
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+}
+
+.calendar__day:hover {
+  background: #f6f7ff;
+}
+
+/* 記録がある日 */
+.calendar__day--has-data {
+  background: #e8f0ff;
+  border-color: #cfe0ff;
+}
+
+.calendar__day--has-data::after {
+  content: "●";
+  font-size: 10px;
+  color: #2f6fe0;
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+}
+
+/* 選択中の日 */
+.calendar__day--selected {
+  outline: 3px solid var(--blue-weak);
+  border-color: #7aa7ff;
+}
+
+/* カレンダー凡例 */
+.calendar-legend {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot--has {
+  background: #2f6fe0;
+}
+
+.dot--sel {
+  background: #7aa7ff;
+}
+
+/* =============================
+   プリセット管理（details）
+============================= */
+.preset-panel__body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.preset-list,
+.preset-editor {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.preset-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.preset-list__btn {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #e7e7e7;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.preset-list__btn:hover {
+  background: #f6f7ff;
+}
+
+.preset-list__btn.is-active {
+  border-color: #7aa7ff;
+  box-shadow: 0 0 0 3px var(--blue-weak);
+}
+
+.preset-list__name {
+  font-weight: 800;
+}
+
+.preset-list__meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.preset-editor__rows-head {
+  display: grid;
+  grid-template-columns: 1fr 120px 90px 40px;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+
+.preset-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 90px 40px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.preset-editor__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.preset-status {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* プリセット登録ボタン */
+.btn--preset {
+  background: #10b981;
+  /* 緑 */
+  color: #fff;
+  border: none;
+}
+
+.btn--preset:hover {
+  filter: brightness(0.95);
+}
+
+/* ===== 曜日ラベル ===== */
+.calendar__weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+}
+
+.calendar__weekday--sun {
+  color: #e53935;
+  /* 日 */
+}
+
+.calendar__weekday--sat {
+  color: #1e88e5;
+  /* 土 */
+}
+
+/* ===== 日付マス（土日） ===== */
+.calendar__day--sun {
+  color: #e53935;
+}
+
+.calendar__day--sat {
+  color: #1e88e5;
+}
+
+/* プリセット登録ボタン */
+.btn--preset {
+  background: #10b981;
+  /* 緑 */
+  border: none;
+  color: #fff;
+}
+
+.btn--preset:hover {
+  filter: brightness(0.95);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+
+
+/* スマホ */
+@media (max-width: 768px) {
+
+  /* 全体 */
+  .app {
+    padding: 10px;
+  }
+
+  .panel {
+    margin: 10px 0;
+    /* 左右はappのpaddingに任せる */
+    padding: 12px;
+  }
+
+  /* フィルターのボタン類が詰まるので縦にも並べられるように */
+  .filter {
+    gap: 10px;
+  }
+
+  /* 回数/セット：1列 */
+  .grid2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* プリセット管理：左右→縦 */
+  .preset-panel__body {
+    display: block;
+  }
+
+  .preset-list,
+  .preset-editor {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  /* プリセット編集の列幅がスマホだと厳しいので少し圧縮 */
+  .preset-editor__rows-head,
+  .preset-row {
+    grid-template-columns: 1fr 90px 70px 40px;
+    gap: 6px;
+  }
+
+  /* 入力とボタン：押しやすく（iOSズーム対策もここ） */
+  .input,
+  .btn {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  /* 一覧：横並び→縦並びにして崩れにくく */
+  .list li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .list li .btn {
+    align-self: flex-end;
+  }
+
+  /* カレンダー：押しやすく */
+  .calendar {
+    gap: 6px;
+  }
+
+  .calendar__day {
+    height: 48px;
+    border-radius: 10px;
+  }
+
+  .calendar__day--has-data::after {
+    bottom: 5px;
+    right: 6px;
+  }
+
+  /* 一覧：横並びのままでも文字が溢れないようにする */
+  .list li {
+    max-width: 100%;
+    overflow: hidden;
+    /* はみ出し防止 */
+  }
+
+  .list li span {
+    display: block;
+    flex: 1;
+    /* 余った幅を使う */
+    min-width: 0;
+    /* ←これが超重要（ellipsisが効く） */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .list li .btn {
+    flex-shrink: 0;
+    /* ボタンは潰れない */
+  }
+
+  .training-date {
+    display: none;
+  }
+
+  .training-main {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+}
