@@ -7,94 +7,73 @@ import DateFilter from "./components/DateFilter";
 import Header from "./components/Header";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
+// localStorage のキー定数
 const STORAGE_KEY = "trainings";
 const EXERCISES_KEY = "exercises";
 const WEIGHTS_KEY = "weights";
 const PRESETS_KEY = "presets_v1";
 
+// "YYYY-MM-DD" 形式の日付文字列を生成する
 function toDateString(year, monthIndex0, day) {
   return `${year}-${String(monthIndex0 + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
-export default function App() {
-  // ✅ Safari等でも落ちないID生成（randomUUID未対応のフォールバック）
-  function makeId() {
-    if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
-    return `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-  }
+// ユニークIDを生成する（Safari等 randomUUID 未対応環境に対応）
+function makeId() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  return `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
 
-  // =========================
-  // ① トレーニング
-  // =========================
+// 重さの初期選択肢（2.5kg 刻みで 100kg まで）
+function defaultWeights() {
+  const initial = [];
+  for (let w = 2.5; w <= 100; w += 2.5) initial.push(Number(w.toFixed(1)));
+  return initial;
+}
+
+export default function App() {
+  // ── ① トレーニング記録 ─────────────────────────
   const [trainings, setTrainings] = useLocalStorage(STORAGE_KEY, []);
 
-  // =========================
-  // ② 種目候補
-  // =========================
+  // ── ② 種目候補 ───────────────────────────────
   const [exercises, setExercises] = useLocalStorage(EXERCISES_KEY, [
     "ベンチプレス",
     "スクワット",
     "デッドリフト",
   ]);
-
-  // 種目入力モード
   const [exerciseMode, setExerciseMode] = useState("select"); // "select" | "custom"
 
-  // =========================
-  // ③ 重さ候補
-  // =========================
-  const defaultWeights = () => {
-    const initial = [];
-    for (let w = 2.5; w <= 100; w += 2.5) initial.push(Number(w.toFixed(1)));
-    return initial;
-  };
-
+  // ── ③ 重さ候補 ───────────────────────────────
   const [weights, setWeights] = useLocalStorage(WEIGHTS_KEY, defaultWeights());
+  const [weightCustom, setWeightCustom] = useState(""); // 自由入力用
 
-  // 重さ自由入力用（selectが__custom__の時だけ使う）
-  const [weightCustom, setWeightCustom] = useState("");
-
-  // =========================
-  // ④ プリセット（★Hooksは全部App内！）
-  // =========================
+  // ── ④ プリセット ─────────────────────────────
   const [presets, setPresets] = useLocalStorage(PRESETS_KEY, []);
-
   const [presetDraft, setPresetDraft] = useState(() => ({
     id: `p_${Date.now()}`,
     name: "",
     items: [{ exercise: "", weight: 0, reps: 10, sets: 3 }],
   }));
-
   const [activePresetId, setActivePresetId] = useState(null);
   const [presetStatus, setPresetStatus] = useState("");
 
-  // =========================
-  // ⑤ 画面状態（絞り込み/フォーム）
-  // =========================
+  // ── ⑤ 画面状態 ──────────────────────────────
   const [selectedDate, setSelectedDate] = useState("");
-
-  // ===== カレンダー：表示している月（前月/次月で変える）=====
   const [calendarBaseDate, setCalendarBaseDate] = useState(() => new Date());
-
   const [form, setForm] = useState(() => {
     const now = new Date();
-    const todayStr = toDateString(now.getFullYear(), now.getMonth(), now.getDate());
-
     return {
-      date: todayStr,
+      date: toDateString(now.getFullYear(), now.getMonth(), now.getDate()),
       name: "",
       weight: "",
       reps: "10",
       sets: "3",
     };
   });
+  const [trainingPresetId, setTrainingPresetId] = useState(""); // フォームで選択中のプリセット
 
-  // ===== トレーニング追加フォーム：選択中プリセット =====
-  const [trainingPresetId, setTrainingPresetId] = useState("");
+  // ── ⑥ トレーニング操作 ─────────────────────────
 
-  // =========================
-  // ⑥ トレーニング操作
-  // =========================
   function removeTraining(id) {
     setTrainings((prev) => prev.filter((t) => t.id !== id));
   }
@@ -104,8 +83,6 @@ export default function App() {
 
     const trimmedName = form.name.trim();
     const date = form.date;
-
-    // 重さ：selectが__custom__なら weightCustom を使う
     const weightValue =
       form.weight === "__custom__" ? Number(weightCustom) : Number(form.weight);
 
@@ -118,12 +95,10 @@ export default function App() {
       return;
     }
 
-    // 新規種目は候補に追加
+    // 新規種目・重さは候補に追加
     if (!exercises.includes(trimmedName)) {
       setExercises((prev) => [...prev, trimmedName]);
     }
-
-    // 新規重さは候補に追加
     if (!weights.includes(weightValue)) {
       setWeights((prev) => [...prev, weightValue].sort((a, b) => a - b));
     }
@@ -131,72 +106,39 @@ export default function App() {
     const reps = Number(form.reps);
     const sets = Number(form.sets);
 
-    const newTraining = {
-      id: makeId(), // ✅ ここを修正
-      date,
-      name: trimmedName,
-      weight: weightValue,
-      reps,
-      sets,
-      totalReps: reps * sets,
-    };
-
-    setTrainings((prev) => [newTraining, ...prev]);
+    setTrainings((prev) => [
+      { id: makeId(), date, name: trimmedName, weight: weightValue, reps, sets, totalReps: reps * sets },
+      ...prev,
+    ]);
     setSelectedDate(date);
 
-    // フォーム初期化（dateは残す）
-    setForm({
-      date,
-      name: "",
-      weight: "",
-      reps: "10",
-      sets: "3",
-    });
+    // フォームリセット（日付は維持）
+    setForm({ date, name: "", weight: "", reps: "10", sets: "3" });
     setWeightCustom("");
     setExerciseMode("select");
   }
 
   function registerPresetTraining() {
-    if (!form.date) {
-      alert("日付を選択してください");
-      return;
-    }
-    if (!trainingPresetId) {
-      alert("プリセットを選択してください");
-      return;
-    }
+    if (!form.date) { alert("日付を選択してください"); return; }
+    if (!trainingPresetId) { alert("プリセットを選択してください"); return; }
 
     const preset = presets.find((p) => p.id === trainingPresetId);
-    if (!preset) {
-      alert("プリセットが見つかりません");
-      return;
-    }
+    if (!preset) { alert("プリセットが見つかりません"); return; }
 
     const newTrainings = preset.items.map((item) => {
       const reps = Number(item.reps) || 10;
       const sets = Number(item.sets) || 3;
       const weight = Number(item.weight) || 0;
-
-      return {
-        id: makeId(), // ✅ ここを修正
-        date: form.date,
-        name: item.exercise,
-        weight,
-        reps,
-        sets,
-        totalReps: reps * sets,
-      };
+      return { id: makeId(), date: form.date, name: item.exercise, weight, reps, sets, totalReps: reps * sets };
     });
 
     setTrainings((prev) => [...newTrainings, ...prev]);
     setSelectedDate(form.date);
-
     alert(`プリセット「${preset.name}」を登録しました`);
   }
 
-  // =========================
-  // ⑦ プリセット操作
-  // =========================
+  // ── ⑦ プリセット操作 ─────────────────────────
+
   function presetNew() {
     setActivePresetId(null);
     setPresetDraft({
@@ -210,13 +152,8 @@ export default function App() {
   function presetLoadToDraft(id) {
     const p = presets.find((x) => x.id === id);
     if (!p) return;
-
     setActivePresetId(p.id);
-    setPresetDraft({
-      id: p.id,
-      name: p.name,
-      items: p.items.map((it) => ({ ...it })),
-    });
+    setPresetDraft({ id: p.id, name: p.name, items: p.items.map((it) => ({ ...it })) });
     setPresetStatus(`編集中：${p.name}`);
   }
 
@@ -230,18 +167,15 @@ export default function App() {
   function presetRemoveRow(index) {
     setPresetDraft((prev) => {
       const next = prev.items.filter((_, i) => i !== index);
-      return {
-        ...prev,
-        items: next.length ? next : [{ exercise: "", weight: 0, reps: 10, sets: 3 }],
-      };
+      return { ...prev, items: next.length ? next : [{ exercise: "", weight: 0, reps: 10, sets: 3 }] };
     });
   }
 
   function presetUpdateRow(index, key, value) {
-    setPresetDraft((prev) => {
-      const items = prev.items.map((row, i) => (i === index ? { ...row, [key]: value } : row));
-      return { ...prev, items };
-    });
+    setPresetDraft((prev) => ({
+      ...prev,
+      items: prev.items.map((row, i) => (i === index ? { ...row, [key]: value } : row)),
+    }));
   }
 
   function presetSaveDraft() {
@@ -289,7 +223,6 @@ export default function App() {
 
     const target = presets.find((p) => p.id === activePresetId);
     if (!target) return;
-
     if (!confirm(`「${target.name}」を削除しますか？`)) return;
 
     setPresets((prev) => prev.filter((p) => p.id !== activePresetId));
@@ -298,17 +231,18 @@ export default function App() {
     setPresetStatus("削除しました");
   }
 
-  // =========================
-  // ⑧ 一覧・カレンダー
-  // =========================
+  // ── ⑧ 一覧・カレンダー用の派生データ ──────────────
+
+  // トレーニングがある日付のセット（カレンダーの印に使う）
   const trainingDateSet = useMemo(() => new Set(trainings.map((t) => t.date)), [trainings]);
 
+  // カレンダーに表示する日付リスト
   const calendarDays = useMemo(() => {
     const year = calendarBaseDate.getFullYear();
-    const month = calendarBaseDate.getMonth(); // 0始まり
-    const last = new Date(year, month + 1, 0).getDate();
+    const month = calendarBaseDate.getMonth();
+    const lastDay = new Date(year, month + 1, 0).getDate();
 
-    return Array.from({ length: last }, (_, i) => {
+    return Array.from({ length: lastDay }, (_, i) => {
       const day = i + 1;
       const dateStr = toDateString(year, month, day);
       return {
@@ -320,6 +254,7 @@ export default function App() {
     });
   }, [trainingDateSet, selectedDate, calendarBaseDate]);
 
+  // 日付ごとにグループ化した全件（日付降順）
   const groupedAll = useMemo(() => {
     const map = {};
     trainings.forEach((t) => {
@@ -331,22 +266,19 @@ export default function App() {
       .map((date) => ({ date, items: map[date] }));
   }, [trainings]);
 
+  // 選択日でフィルタした一覧
   const filteredItems = useMemo(
     () => trainings.filter((t) => t.date === selectedDate),
     [trainings, selectedDate]
   );
 
-  // =========================
-  // 画面
-  // =========================
+  // ── 画面 ────────────────────────────────────
   return (
     <div className="app">
       <Header />
 
-      {/* 日付で表示 */}
       <DateFilter selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
 
-      {/* トレーニング追加 */}
       <TrainingForm
         form={form}
         setForm={setForm}
@@ -363,7 +295,6 @@ export default function App() {
         onRegisterPreset={registerPresetTraining}
       />
 
-      {/* プリセット管理 */}
       <PresetManager
         presets={presets}
         presetDraft={presetDraft}
@@ -379,7 +310,6 @@ export default function App() {
         setPresetDraft={setPresetDraft}
       />
 
-      {/* 一覧 */}
       <TrainingList
         selectedDate={selectedDate}
         filteredItems={filteredItems}
@@ -387,7 +317,6 @@ export default function App() {
         removeTraining={removeTraining}
       />
 
-      {/* カレンダー */}
       <Calendar
         calendarBaseDate={calendarBaseDate}
         setCalendarBaseDate={setCalendarBaseDate}

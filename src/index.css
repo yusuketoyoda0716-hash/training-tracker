@@ -25,6 +25,13 @@ body {
   color: var(--text);
 }
 
+/* Viteが生成する #root のデフォルト設定を上書き */
+#root {
+  max-width: 100%;
+  padding: 0;
+  text-align: left;
+}
+
 /* =============================
    アプリ全体のレイアウト
 ============================= */
@@ -105,6 +112,7 @@ details[open] .panel__summary::after {
   border: 1px solid #ddd;
   border-radius: 12px;
   background: #fff;
+  font-size: 15px;
 }
 
 .input:focus {
@@ -120,10 +128,16 @@ details[open] .panel__summary::after {
   border-radius: 12px;
   cursor: pointer;
   white-space: nowrap;
+  font-size: 15px;
 }
 
 .btn:hover {
   background: #f4f4f4;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* サブボタン（見た目控えめ） */
@@ -155,6 +169,17 @@ details[open] .panel__summary::after {
   border: 1px solid #eee;
 }
 
+/* プリセット一括登録ボタン（緑） */
+.btn--preset {
+  background: #10b981;
+  border: none;
+  color: #fff;
+}
+
+.btn--preset:hover {
+  filter: brightness(0.95);
+}
+
 /* =============================
    フォーム・日付フィルター
 ============================= */
@@ -177,7 +202,7 @@ details[open] .panel__summary::after {
   color: var(--muted);
 }
 
-/* 回数・セットなどの2カラム */
+/* 回数・セット数の2カラム */
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -256,6 +281,31 @@ details[open] .panel__summary::after {
   border-color: #7aa7ff;
 }
 
+/* 曜日ラベル */
+.calendar__weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+}
+
+.calendar__weekday--sun {
+  color: #e53935;
+}
+
+.calendar__weekday--sat {
+  color: #1e88e5;
+}
+
+/* 日付マス（土日） */
+.calendar__day--sun {
+  color: #e53935;
+}
+
+.calendar__day--sat {
+  color: #1e88e5;
+}
+
 /* カレンダー凡例 */
 .calendar-legend {
   display: flex;
@@ -283,7 +333,7 @@ details[open] .panel__summary::after {
 }
 
 /* =============================
-   プリセット管理（details）
+   プリセット管理
 ============================= */
 .preset-panel__body {
   display: grid;
@@ -337,6 +387,7 @@ details[open] .panel__summary::after {
   margin-top: 4px;
 }
 
+/* プリセット編集：列ヘッダー＆入力行 */
 .preset-editor__rows-head {
   display: grid;
   grid-template-columns: 1fr 120px 90px 40px;
@@ -366,172 +417,127 @@ details[open] .panel__summary::after {
   color: var(--muted);
 }
 
-/* プリセット登録ボタン */
-.btn--preset {
-  background: #10b981;
-  /* 緑 */
-  color: #fff;
-  border: none;
-}
-
-.btn--preset:hover {
-  filter: brightness(0.95);
-}
-
-/* ===== 曜日ラベル ===== */
-.calendar__weekday {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: #666;
-}
-
-.calendar__weekday--sun {
-  color: #e53935;
-  /* 日 */
-}
-
-.calendar__weekday--sat {
-  color: #1e88e5;
-  /* 土 */
-}
-
-/* ===== 日付マス（土日） ===== */
-.calendar__day--sun {
-  color: #e53935;
-}
-
-.calendar__day--sat {
-  color: #1e88e5;
-}
-
-/* プリセット登録ボタン */
-.btn--preset {
-  background: #10b981;
-  /* 緑 */
-  border: none;
-  color: #fff;
-}
-
-.btn--preset:hover {
-  filter: brightness(0.95);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-
-
-
-
-/* スマホ */
+/* =============================
+   スマホ対応（768px 以下）
+============================= */
 @media (max-width: 768px) {
-
-  /* 全体 */
+  /* アプリ全体の余白を小さく */
   .app {
     padding: 10px;
   }
 
   .panel {
-    margin: 10px 0;
-    /* 左右はappのpaddingに任せる */
     padding: 12px;
+    margin: 8px 0;
   }
 
-  /* フィルターのボタン類が詰まるので縦にも並べられるように */
+  /* iOSのズームを防ぐため、入力系は 16px 以上にする */
+  .input,
+  .btn {
+    font-size: 16px;
+  }
+
+  /* 入力欄は余裕を持たせてタップしやすく */
+  .input {
+    padding: 13px 12px;
+  }
+
+  .btn {
+    padding: 12px 14px;
+  }
+
+  /* フィルターのボタンは横に並ぶ（折り返しOK） */
   .filter {
-    gap: 10px;
+    gap: 8px;
   }
 
-  /* 回数/セット：1列 */
+  /* 回数/セット：スマホでは1列 */
   .grid2 {
     grid-template-columns: 1fr;
     gap: 10px;
   }
 
-  /* プリセット管理：左右→縦 */
-  .preset-panel__body {
+  /* ── 一覧 ── */
+
+  /* カード形式で縦積み表示 */
+  .list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* トレーニング情報は折り返し可能に */
+  .list li .training-text {
+    width: 100%;
+  }
+
+  .training-date {
+    display: none; /* 日付は一覧ヘッダーに出るので省略 */
+  }
+
+  .training-main {
     display: block;
+    white-space: normal;   /* 折り返しOK */
+    word-break: break-all;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* 削除ボタンを右端に揃える */
+  .list li .btn--danger {
+    align-self: flex-end;
+  }
+
+  /* ── カレンダー ── */
+
+  .calendar {
+    gap: 5px;
+  }
+
+  .calendar__day {
+    height: 44px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .calendar__day--has-data::after {
+    bottom: 4px;
+    right: 5px;
+    font-size: 9px;
+  }
+
+  /* ── プリセット管理 ── */
+
+  /* 左右分割 → 縦積みに変更 */
+  .preset-panel__body {
+    grid-template-columns: 1fr;
   }
 
   .preset-list,
   .preset-editor {
     width: 100%;
-    margin-bottom: 12px;
   }
 
-  /* プリセット編集の列幅がスマホだと厳しいので少し圧縮 */
-  .preset-editor__rows-head,
-  .preset-row {
-    grid-template-columns: 1fr 90px 70px 40px;
-    gap: 6px;
-  }
-
-  /* 入力とボタン：押しやすく（iOSズーム対策もここ） */
-  .input,
-  .btn {
-    font-size: 16px;
-    padding: 12px;
-  }
-
-  /* 一覧：横並び→縦並びにして崩れにくく */
-  .list li {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .list li .btn {
-    align-self: flex-end;
-  }
-
-  /* カレンダー：押しやすく */
-  .calendar {
-    gap: 6px;
-  }
-
-  .calendar__day {
-    height: 48px;
-    border-radius: 10px;
-  }
-
-  .calendar__day--has-data::after {
-    bottom: 5px;
-    right: 6px;
-  }
-
-  /* 一覧：横並びのままでも文字が溢れないようにする */
-  .list li {
-    max-width: 100%;
-    overflow: hidden;
-    /* はみ出し防止 */
-  }
-
-  .list li span {
-    display: block;
-    flex: 1;
-    /* 余った幅を使う */
-    min-width: 0;
-    /* ←これが超重要（ellipsisが効く） */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .list li .btn {
-    flex-shrink: 0;
-    /* ボタンは潰れない */
-  }
-
-  .training-date {
+  /* 列ヘッダーは非表示（モバイルではレイアウトが変わるため） */
+  .preset-editor__rows-head {
     display: none;
   }
 
-  .training-main {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  /* 編集行：種目名を1行目（全幅）、重さ・回数・削除を2行目 */
+  .preset-row {
+    grid-template-columns: 1fr 1fr 44px;
+    grid-template-rows: auto auto;
+    gap: 6px;
   }
 
+  /* 種目名入力（1列目）を全幅に */
+  .preset-row > input:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* 削除ボタンを縦方向で中央揃え */
+  .preset-row > .btn--ghost {
+    align-self: center;
+    padding: 10px;
+  }
 }
