@@ -390,7 +390,7 @@ details[open] .panel__summary::after {
 /* プリセット編集：列ヘッダー＆入力行 */
 .preset-editor__rows-head {
   display: grid;
-  grid-template-columns: 1fr 120px 90px 40px;
+  grid-template-columns: 1fr 110px 80px 80px 40px;
   gap: 8px;
   font-size: 12px;
   color: var(--muted);
@@ -399,7 +399,7 @@ details[open] .panel__summary::after {
 
 .preset-row {
   display: grid;
-  grid-template-columns: 1fr 120px 90px 40px;
+  grid-template-columns: 1fr 110px 80px 80px 40px;
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -466,15 +466,6 @@ details[open] .panel__summary::after {
     gap: 8px;
   }
 
-  /* トレーニング情報は折り返し可能に */
-  .list li .training-text {
-    width: 100%;
-  }
-
-  .training-date {
-    display: none; /* 日付は一覧ヘッダーに出るので省略 */
-  }
-
   .training-main {
     display: block;
     white-space: normal;   /* 折り返しOK */
@@ -519,13 +510,19 @@ details[open] .panel__summary::after {
   }
 
   /* 列ヘッダーは非表示（モバイルではレイアウトが変わるため） */
+  /* 見出しは「重さ・回数・セット」だけを2行目の入力欄の上に出す */
   .preset-editor__rows-head {
+    grid-template-columns: 1fr 1fr 1fr 44px;
+    gap: 6px;
+  }
+
+  .preset-editor__rows-head > span:first-child {
     display: none;
   }
 
-  /* 編集行：種目名を1行目（全幅）、重さ・回数・削除を2行目 */
+  /* 編集行：種目名を1行目（全幅）、重さ・回数・セット・削除を2行目 */
   .preset-row {
-    grid-template-columns: 1fr 1fr 44px;
+    grid-template-columns: 1fr 1fr 1fr 44px;
     grid-template-rows: auto auto;
     gap: 6px;
   }

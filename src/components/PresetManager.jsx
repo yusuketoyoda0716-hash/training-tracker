@@ -69,6 +69,7 @@ export default function PresetManager({
             <span>種目名</span>
             <span>重さ</span>
             <span>回数</span>
+            <span>セット</span>
             <span></span>
           </div>
 
@@ -100,6 +101,17 @@ export default function PresetManager({
                   value={row.reps}
                   onChange={(e) =>
                     presetUpdateRow(idx, "reps", Number(e.target.value))
+                  }
+                />
+                <input
+                  className="input"
+                  type="number"
+                  min="1"
+                  step="1"
+                  aria-label="セット数"
+                  value={row.sets}
+                  onChange={(e) =>
+                    presetUpdateRow(idx, "sets", Number(e.target.value))
                   }
                 />
                 <button

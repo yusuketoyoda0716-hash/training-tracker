@@ -13,14 +13,6 @@ export default function DateFilter({ selectedDate, setSelectedDate }) {
 
         <button
           type="button"
-          className="btn"
-          onClick={() => setSelectedDate(selectedDate)}
-        >
-          この日だけ表示
-        </button>
-
-        <button
-          type="button"
           className="btn btn--sub"
           onClick={() => setSelectedDate("")}
         >
@@ -28,7 +20,7 @@ export default function DateFilter({ selectedDate, setSelectedDate }) {
         </button>
       </div>
 
-      <p className="hint">※ 日付未選択なら全件表示</p>
+      <p className="hint">※ 日付を選ぶとその日の記録だけ表示（未選択なら全件）</p>
     </section>
   );
 }
