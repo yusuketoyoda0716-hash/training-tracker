@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// トレーニングノートの Firestore セキュリティルール
+// 自分の uid 配下（users/{uid}/...）のデータだけ読み書きできる
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // 記録：日付・種目・数値の形をチェックしてから保存を許可する
+    function isValidTraining(d) {
+      return d.date is string && d.date.size() == 10
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && d.weight is number && d.weight >= 0
+        && d.reps is number && d.reps >= 1
+        && d.sets is number && d.sets >= 1;
+    }
+
+    match /users/{uid}/trainings/{id} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid) && isValidTraining(request.resource.data);
+    }
+
+    match /users/{uid}/presets/{id} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /users/{uid}/meta/{id} {
+      allow read, write: if isOwner(uid);
+    }
+  }
+}

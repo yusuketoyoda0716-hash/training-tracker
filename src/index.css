@@ -831,3 +831,172 @@ select {
     color: var(--ink-soft);
   }
 }
+
+/* =========================================
+   Account / notices
+========================================= */
+
+.masthead__account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.masthead__account .masthead__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.masthead__count {
+  margin: -8px 0 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 14px;
+}
+
+.notice--action {
+  border-color: #b9c6e6;
+  background: var(--pen-tint);
+}
+
+.notice--error {
+  border-color: #e6bcbc;
+  background: #fbefef;
+  color: var(--danger);
+}
+
+.notice__error {
+  color: var(--danger);
+  font-weight: 400;
+}
+
+.notice__actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+/* =========================================
+   Login（ノートの表紙）
+========================================= */
+
+.login {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.notecover {
+  position: relative;
+  width: min(380px, 100%);
+  padding: 48px 32px 32px;
+  border-radius: 4px 10px 10px 4px;
+  background: #2f4f86;
+  color: #fff;
+  box-shadow:
+    inset 14px 0 0 #263f6c, /* 背表紙 */
+    0 18px 40px rgba(42, 45, 52, 0.25);
+}
+
+/* 表紙に貼ったラベル（罫線入り） */
+.notecover__label {
+  margin: 0 0 28px 14px;
+  padding: 18px 20px 14px;
+  border-radius: 3px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.notecover__title {
+  font-family: var(--hand);
+  font-size: 28px;
+  font-weight: 600;
+  font-feature-settings: "palt";
+}
+
+.notecover__lines {
+  height: 48px;
+  margin-top: 6px;
+  background-image: linear-gradient(to bottom, transparent 23px, var(--rule) 23px);
+  background-size: 100% 24px;
+}
+
+.notecover__lead {
+  margin: 0 0 24px 14px;
+  font-size: 14px;
+  color: #dfe6f5;
+  font-feature-settings: "palt";
+}
+
+.notecover__actions {
+  display: grid;
+  gap: 10px;
+  margin-left: 14px;
+}
+
+.notecover .btn {
+  min-height: 48px;
+  font-size: 15px;
+}
+
+.notecover .btn--pen {
+  border-color: #fff;
+  background: #fff;
+  color: var(--pen-deep);
+}
+
+.notecover .btn--pen:hover {
+  background: #eef2fb;
+}
+
+.notecover .btn:not(.btn--pen) {
+  border-color: #c9d5ef;
+  background: transparent;
+  color: #fff;
+}
+
+.notecover .btn:not(.btn--pen):hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.notecover__note {
+  margin: 0;
+  font-size: 12px;
+  color: #c9d5ef;
+}
+
+.notecover__error {
+  margin: 0;
+  font-size: 13px;
+  color: #ffd2cc;
+}
+
+@media (max-width: 640px) {
+  .masthead {
+    align-items: center;
+  }
+
+  .masthead__account .masthead__meta {
+    max-width: 46vw;
+  }
+
+  .masthead__count {
+    padding: 0 6px;
+  }
+}
