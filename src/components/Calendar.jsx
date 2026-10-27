@@ -4,9 +4,15 @@ export default function Calendar({
   calendarBaseDate,
   setCalendarBaseDate,
   calendarDays,
-  selectedDate,
   setSelectedDate,
 }) {
+  // 1日が何曜日か（0=日曜）。その分だけ先頭に空きマスを入れて曜日の列とそろえる
+  const firstWeekday = new Date(
+    calendarBaseDate.getFullYear(),
+    calendarBaseDate.getMonth(),
+    1
+  ).getDay();
+
   return (
     <section className="panel">
       <h2 className="panel__title">カレンダー</h2>
@@ -66,6 +72,10 @@ export default function Calendar({
 
       {/* 日付マス */}
       <div className="calendar">
+        {Array.from({ length: firstWeekday }, (_, i) => (
+          <div key={`blank-${i}`} aria-hidden="true" />
+        ))}
+
         {calendarDays.map((d) => (
           <div
             key={d.dateStr}
@@ -73,8 +83,8 @@ export default function Calendar({
               "calendar__day",
               d.hasData && "calendar__day--has-data",
               d.isSelected && "calendar__day--selected",
-              new Date(d.dateStr).getDay() === 0 && "calendar__day--sun",
-              new Date(d.dateStr).getDay() === 6 && "calendar__day--sat",
+              (firstWeekday + d.day - 1) % 7 === 0 && "calendar__day--sun",
+              (firstWeekday + d.day - 1) % 7 === 6 && "calendar__day--sat",
             ]
               .filter(Boolean)
               .join(" ")}

@@ -187,6 +187,7 @@ export default function App() {
       if (!r.exercise.trim()) return alert(`種目名が空です（${i + 1}行目）`);
       if (!(Number(r.weight) >= 0)) return alert(`重さが不正です（${i + 1}行目）`);
       if (!(Number(r.reps) >= 1)) return alert(`回数が不正です（${i + 1}行目）`);
+      if (!(Number(r.sets) >= 1)) return alert(`セット数が不正です（${i + 1}行目）`);
     }
 
     const nextPreset = {
@@ -321,7 +322,6 @@ export default function App() {
         calendarBaseDate={calendarBaseDate}
         setCalendarBaseDate={setCalendarBaseDate}
         calendarDays={calendarDays}
-        selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
       />
     </div>
